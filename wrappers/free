@@ -1,0 +1,7 @@
+#!/home/nokkasiili/Code/nscwrs/target/debug/nscwrs
+[fg:green]
+Mem:.*
+[fg:yellow]
+Buffers/cache:.*
+[fg:red]
+Swap:.*

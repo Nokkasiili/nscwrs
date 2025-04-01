@@ -1,0 +1,11 @@
+[package]
+name = "nscwrs"
+version = "0.1.0"
+edition = "2024"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+atty = "0.2.14"
+colored = "3.0.0"
+regex = "1.11.1"

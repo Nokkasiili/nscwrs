@@ -1,0 +1,15 @@
+#!/home/nokkasiili/Code/nscwrs/target/debug/nscwrs
+[fg:cyan]
+^(\d{2}:\d{2}:\d{2})
+
+[fg:green]
+up\s+\d+:\d+,
+
+[fg:yellow]
+\w+\s+user,
+
+[fg:magenta]
+load average:.*
+
+[fg:red]
+load average:.*(\d{1,2}\.\d{2})

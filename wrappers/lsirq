@@ -1,0 +1,7 @@
+#!/home/nokkasiili/Code/nscwrs/target/debug/nscwrs
+[fg:yellow]
+[^\w\s]
+[fg:brightcyan]
+[0-9]+
+[fg:red]
+\b[A-Z]{3}\b

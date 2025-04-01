@@ -1,0 +1,11 @@
+#!/home/nokkasiili/Code/nscwrs/target/debug/nscwrs
+[fg:green]
+^\s*\d+\s+
+[fg:cyan]
+\.\S+
+
+[fg:yellow]
+\.\S+\s+\d+\s+k
+
+[fg:red]
+\.\S+\s+\d+\s+M1    

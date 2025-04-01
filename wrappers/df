@@ -1,0 +1,17 @@
+#!/home/nokkasiili/Code/nscwrs/target/debug/nscwrs
+[fg:magenta]
+^Filesystem|1K-blocks|Used|Available|Use%|Mounted on$
+[fg:brightyellow]
+^\S+
+[fg:yellow]
+\s/\S*
+
+[fg:green]
+(^|\s)[0-4]?[0-9]%
+[fg:yellow]
+(^|\s)[5-7][0-9]%
+[fg:red]
+(^|\s)(8[0-9]|9[0-9]|100)%
+
+[fg:green]
+\b\d+\b

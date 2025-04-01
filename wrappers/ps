@@ -1,0 +1,8 @@
+#!/home/nokkasiili/Code/nscwrs/target/debug/nscwrs
+[fg:green]
+^\s*\d+\s+
+[fg:blue]
+\w+
+
+[fg:red]
+^\s*(\d+)\s+(Z|T|X)\s+
