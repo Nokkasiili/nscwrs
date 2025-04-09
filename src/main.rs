@@ -1,7 +1,6 @@
 use atty::Stream;
 use colored::*;
 use regex::Regex;
-use std::collections::BTreeMap;
 use std::env;
 use std::fs;
 use std::io::{self, BufRead, BufReader, Write};
@@ -133,49 +132,62 @@ fn parse_colors(color_def: &str) -> (Option<Color>, Option<Color>) {
 }
 
 fn apply_color_rules(line: &str, rules: &[Rule], use_color: bool) -> String {
-    if !use_color {
+    if !use_color || rules.is_empty() {
         return line.to_string();
     }
 
-    let mut colored_segments = BTreeMap::new();
+    let mut matches: Vec<(usize, usize, usize)> = Vec::new();
 
-    for rule in rules {
+    for (rule_idx, rule) in rules.iter().enumerate() {
         for cap in rule.regex.captures_iter(line) {
             if let Some(matched) = cap.get(0) {
-                let start = matched.start();
-                let end = matched.end();
-
-                if colored_segments.keys().any(|&(s, e)| start < e && end > s) {
-                    continue;
-                }
-
-                let mut styled_text = matched.as_str().color(rule.fg_color);
-
-                if let Some(bg) = rule.bg_color {
-                    styled_text = styled_text.on_color(bg);
-                }
-
-                colored_segments.insert((start, end), styled_text.to_string());
+                matches.push((matched.start(), matched.end(), rule_idx));
             }
         }
     }
 
-    let mut final_output = String::new();
-    let mut last_index = 0;
-
-    for (&(start, end), styled_text) in &colored_segments {
-        final_output.push_str(&line[last_index..start]);
-        final_output.push_str(styled_text);
-        last_index = end;
+    if matches.is_empty() {
+        return line.to_string();
     }
 
-    if last_index < line.len() {
-        final_output.push_str(&line[last_index..]);
+    matches.sort_by(|a, b| a.0.cmp(&b.0).then_with(|| (b.1 - b.0).cmp(&(a.1 - a.0))));
+
+    let mut filtered_matches = Vec::new();
+    let mut last_end = 0;
+
+    for m in matches {
+        if m.0 >= last_end {
+            filtered_matches.push(m);
+            last_end = m.1;
+        }
     }
 
-    final_output
+    let mut result = String::with_capacity(line.len() * 2);
+    let mut last_pos = 0;
+
+    for (start, end, rule_idx) in filtered_matches {
+        if start > last_pos {
+            result.push_str(&line[last_pos..start]);
+        }
+
+        let rule = &rules[rule_idx];
+        let segment = &line[start..end];
+        let mut styled = segment.color(rule.fg_color);
+
+        if let Some(bg) = rule.bg_color {
+            styled = styled.on_color(bg);
+        }
+
+        result.push_str(&styled.to_string());
+        last_pos = end;
+    }
+
+    if last_pos < line.len() {
+        result.push_str(&line[last_pos..]);
+    }
+
+    result
 }
-
 fn main() {
     let wrapped_program = get_wrapped_program().expect("Failed to determine wrapped program");
     let wrapper_path = Path::new(WRAP_DIR).join(&wrapped_program);
